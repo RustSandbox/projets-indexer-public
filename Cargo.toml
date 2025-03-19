@@ -7,7 +7,7 @@ authors = ["Hamze Ghalebi ghalebi@gmail.com"]
 license = "MIT"
 repository = "https://github.com/RustSandbox/projets-indexer-public"
 readme = "README.md"
-keywords = ["projects", "indexing", "organization", "ai", "tags", "git"]
+keywords = ["projects", "indexing", "organization", "ai", "tags"]
 categories = ["command-line-utilities", "development-tools"]
 
 [dependencies]

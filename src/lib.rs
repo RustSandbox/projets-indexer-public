@@ -1,102 +1,77 @@
-//! # Projects Indexer
+//! A powerful command-line tool for indexing and organizing your projects with AI-powered tag generation.
 //!
-//! `projets-indexer` is a powerful command-line tool for indexing and organizing your projects
-//! with AI-powered tag generation. It helps developers maintain a clear overview of their project
-//! collection by scanning directories, detecting project types, and providing detailed statistics.
+//! This crate provides functionality to:
+//! - Scan and index projects in a directory
+//! - Detect project status (active/archived)
+//! - Generate tags using Ollama's AI capabilities
+//! - Search through indexed projects
+//! - Generate project statistics
 //!
-//! ## Features
+//! # Features
 //!
-//! - 🔍 Recursive directory scanning with configurable depth
-//! - 📊 Project status detection (active/archived) based on git history
-//! - 🏷️ AI-powered tag generation using Ollama
-//! - 📁 Smart project categorization based on directory structure
-//! - 🔎 Search functionality across projects, tags, and categories
-//! - 📈 Detailed project statistics and insights
+//! - 🔍 Recursive directory scanning
+//! - 🚀 Project status detection
+//! - 📦 AI-powered tag generation
+//! - 📚 Smart project categorization
+//! - 🔎 Search functionality
+//! - 📊 Detailed project statistics
 //!
-//! ## Usage
+//! # Usage
 //!
 //! ```bash
-//! # Index projects with default settings
-//! projets-indexer index
+//! # Index projects with Ollama tag generation
+//! projets-indexer index --ollama
 //!
-//! # Index projects with custom directory and output
-//! projets-indexer index -d ~/my-projects -o my-index.json
-//!
-//! # Search projects
-//! projets-indexer search "machine learning"
+//! # Search through indexed projects
+//! projets-indexer search "your query"
 //!
 //! # Show project statistics
 //! projets-indexer stats
 //!
 //! # Generate tags for a specific project
-//! projets-indexer generate-tags -p ~/projects/my-project
+//! projets-indexer generate-tags /path/to/project
 //! ```
 //!
-//! ## Modules
+//! # Examples
 //!
-//! - [`cli`](cli/index.html): Command-line interface implementation using clap
-//! - [`config`](config/index.html): Configuration structures and handling
-//! - [`indexer`](indexer/index.html): Core project indexing functionality
-//! - [`models`](models/index.html): Data structures for projects and related entities
-//! - [`ollama`](ollama/index.html): Integration with Ollama for AI-powered tag generation
-//! - [`ui`](ui/index.html): Terminal UI components and progress indicators
-//! - [`error`](error/index.html): Error types and handling
-//!
-//! ## Examples
-//!
-//! Basic usage of the library:
-//!
-//! ```rust,no_run
+//! ```
 //! use projets_indexer::{
-//!     config::IndexerConfig,
-//!     indexer::ProjectIndexer,
+//!     ollama::{OllamaClient, ClientConfig},
+//!     error::Result,
 //! };
-//! use std::path::PathBuf;
+//! use std::time::Duration;
+//! use mockito::Server;
 //!
 //! #[tokio::main]
-//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     // Create indexer configuration
-//!     let config = IndexerConfig::new(
-//!         PathBuf::from("~/projects"),
-//!         PathBuf::from("index.json"),
-//!         true, // enable Ollama
-//!     );
+//! async fn main() -> Result<()> {
+//!     let mut server = Server::new_async().await;
+//!     let mock = server.mock("POST", "/api/generate")
+//!         .with_status(200)
+//!         .with_header("content-type", "application/json")
+//!         .with_body(r#"{"response": "rust, cli, project management"}"#)
+//!         .create_async()
+//!         .await;
 //!
-//!     // Initialize project indexer
-//!     let indexer = ProjectIndexer::new(config)?;
-//!
-//!     // Index projects with a progress callback
-//!     let projects = indexer.index_projects(|project_name| {
-//!         println!("Indexing: {}", project_name);
-//!     }).await?;
-//!
-//!     println!("Found {} projects", projects.len());
+//!     let config = ClientConfig {
+//!         base_url: server.url(),
+//!         timeout: Duration::from_secs(30),
+//!     };
+//!     let client = OllamaClient::new(config)?;
+//!     let response = client.generate_tags("my-project").await?;
+//!     assert_eq!(response, vec!["rust", "cli", "project management"]);
 //!     Ok(())
 //! }
 //! ```
 //!
-//! ## Re-exports
+//! # Modules
 //!
-//! The following types are re-exported for convenience:
-//!
-//! - [`IndexerConfig`]: Configuration for the project indexer
-//! - [`ProjectIndexer`]: Main indexer implementation
-//! - [`Project`]: Project metadata structure
-//! - [`ProjectStatus`]: Project status enumeration
-//! - [`OllamaClient`]: Client for interacting with Ollama API
-//!
-//! ## Error Handling
-//!
-//! The library uses a custom error type [`OllamaError`] and a type alias [`Result`]
-//! for consistent error handling across all modules.
-//!
-//! ## Dependencies
-//!
-//! - `tokio`: Async runtime
-//! - `serde`: Serialization/deserialization
-//! - `walkdir`: Directory traversal
-//! - `tracing`: Logging and diagnostics
-//! - `reqwest`: HTTP client for Ollama API
+//! - `cli`: Command-line interface and argument parsing
+//! - `config`: Configuration types and settings
+//! - `indexer`: Project scanning and indexing functionality
+//! - `models`: Data models and types
+//! - `ollama`: Ollama API client and integration
+//! - `ui`: User interface components and formatting
+//! - `error`: Error types and handling
 
 pub mod cli;
 pub mod config;
@@ -106,12 +81,10 @@ pub mod models;
 pub mod ollama;
 pub mod ui;
 
-pub use cli::{Cli, Commands};
-pub use config::indexer_config::IndexerConfig;
-pub use error::{OllamaError, Result};
-pub use indexer::project_indexer::ProjectIndexer;
-pub use models::project::{Project, ProjectStatus};
-pub use ollama::{ClientConfig, GenerateRequest, GenerateResponse, OllamaClient};
+pub use error::{AppError, Result};
+pub use indexer::ProjectIndexer;
+pub use models::{Project, ProjectStatus};
+pub use ollama::{ClientConfig, OllamaClient};
 
 /// Common types and traits for the projects indexer.
 ///

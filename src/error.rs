@@ -5,6 +5,20 @@
 
 use thiserror::Error;
 
+/// Custom error type for the application
+#[derive(Error, Debug)]
+pub enum AppError {
+    /// Error from the Ollama service
+    #[error("Ollama error: {0}")]
+    Ollama(#[from] OllamaError),
+    /// IO error
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
+    /// JSON error
+    #[error("JSON error: {0}")]
+    Json(#[from] serde_json::Error),
+}
+
 /// Custom error type for the project indexer
 ///
 /// This enum represents all possible errors that can occur during the
@@ -66,6 +80,34 @@ pub enum OllamaError {
     /// Error occurred during task join
     #[error("Task join error: {0}")]
     JoinError(#[from] tokio::task::JoinError),
+
+    /// Error occurred during Ollama connection
+    #[error("Failed to connect to Ollama service: {0}")]
+    Connection(String),
+
+    /// Error occurred during Ollama tag generation
+    #[error("Failed to generate tags: {0}")]
+    Generation(String),
+
+    /// Error occurred during Ollama response parsing
+    #[error("Failed to parse response: {0}")]
+    Parse(String),
+
+    /// Error occurred during Ollama setup
+    #[error("Setup error: {0}")]
+    Setup(String),
+
+    /// Connection error
+    #[error("Connection error: {0}")]
+    ConnectionError(String),
+
+    /// Generation error
+    #[error("Generation error: {0}")]
+    GenerationError(String),
+
+    /// Parse error
+    #[error("Parse error: {0}")]
+    ParseError(String),
 }
 
 /// Type alias for Result using OllamaError
@@ -83,4 +125,4 @@ pub enum OllamaError {
 ///     Ok(())
 /// }
 /// ```
-pub type Result<T> = std::result::Result<T, OllamaError>;
+pub type Result<T> = std::result::Result<T, AppError>;

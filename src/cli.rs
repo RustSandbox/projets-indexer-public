@@ -7,33 +7,32 @@ use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
 /// A powerful tool for indexing and organizing your projects
-#[derive(Parser, Debug)]
-#[command(
-    author = "Hamze Ghalebi <ghalebi@gmail.com>",
-    version = "0.1.0",
-    about = "A tool for indexing and organizing your projects. It can scan directories, \
-                  detect project types, generate tags using Local llm models, and provide detailed statistics \
-                  about your project collection.",
-    long_about = "A tool for indexing and organizing your projects. It can scan directories, \
-                  detect project types, generate tags using AI, and provide detailed statistics \
-                  about your project collection."
-)]
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
 pub struct Cli {
-    /// The command to execute
-    #[command(subcommand)]
-    pub command: Commands,
-
     /// Enable verbose output (debug level logging)
-    #[arg(short, long, global = true)]
+    #[arg(short, long)]
     pub verbose: bool,
 
     /// Disable color output in terminal
-    #[arg(short, long, global = true)]
+    #[arg(short, long)]
     pub no_color: bool,
+
+    /// Enable Ollama for tag generation
+    #[arg(short, long)]
+    pub ollama: bool,
+
+    /// Ollama API URL
+    #[arg(long, default_value = "http://localhost:11434")]
+    pub ollama_url: String,
+
+    /// The command to execute
+    #[command(subcommand)]
+    pub command: Commands,
 }
 
 /// Available commands for the project indexer
-#[derive(Subcommand, Debug)]
+#[derive(Subcommand)]
 pub enum Commands {
     /// Index projects in the specified directory
     #[command(
@@ -63,32 +62,23 @@ pub enum Commands {
         )]
         output: PathBuf,
 
-        /// Enable Ollama for tag generation
-        #[arg(
-            short = 'a',
-            long,
-            default_value_t = true,
-            help = "Enable Ollama AI for generating project tags"
-        )]
-        ollama: bool,
-
-        /// Maximum depth to traverse directories
+        /// Maximum directory depth to traverse
         #[arg(
             short = 'x',
             long,
             default_value_t = 3,
             help = "Maximum directory depth to traverse"
         )]
-        max_depth: usize,
+        max_depth: u32,
 
-        /// Minimum depth to traverse directories
+        /// Minimum directory depth to traverse
         #[arg(
             short = 'm',
             long,
             default_value_t = 3,
             help = "Minimum directory depth to traverse"
         )]
-        min_depth: usize,
+        min_depth: u32,
 
         /// Exclude specific directories (comma-separated)
         #[arg(
@@ -119,11 +109,11 @@ pub enum Commands {
         )]
         index_file: PathBuf,
 
-        /// Search by tags only
+        /// Search only in tags
         #[arg(short, long, help = "Only search in project tags")]
         tags_only: bool,
 
-        /// Search by category only
+        /// Search only in categories
         #[arg(short, long, help = "Only search in project categories")]
         category_only: bool,
     },
@@ -147,7 +137,7 @@ pub enum Commands {
         )]
         index_file: PathBuf,
 
-        /// Show detailed category breakdown
+        /// Show detailed statistics
         #[arg(short, long, help = "Show detailed statistics for each category")]
         detailed: bool,
     },

@@ -1,0 +1,15 @@
+/target/
+**/*.rs.bk
+Cargo.lock
+.env
+.idea/
+.vscode/
+*.pdb
+*.json
+*.log
+*.log.*
+*.log.*.*
+*.log.*.*.*
+*.log.*.*.*.*
+*.log.*.*.*.*.*
+prompt.md

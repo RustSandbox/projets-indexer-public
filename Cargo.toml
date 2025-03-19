@@ -1,0 +1,30 @@
+[package]
+name = "projets-indexer"
+version = "0.1.1"
+edition = "2021"
+description = "A powerful command-line tool for indexing and organizing your projects with AI-powered tag generation"
+authors = ["Hamze Ghalebi ghalebi@gmail.com"]
+license = "MIT"
+repository = "https://github.com/hghalebi/projets-indexer"
+keywords = ["projects", "indexer", "ollama", "ai", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+readme = "README.md"
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1.36", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+async-trait = "0.1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+url = "2.5"
+walkdir = "2.4"
+console = "0.15"
+indicatif = { version = "0.17", features = ["improved_unicode"] }
+clap = { version = "4.5", features = ["derive"] }
+
+[[example]]
+name = "basic_usage"
+path = "examples/basic_usage.rs"

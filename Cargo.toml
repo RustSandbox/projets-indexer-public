@@ -1,6 +1,6 @@
 [package]
 name = "projets-indexer"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "A powerful command-line tool for indexing and organizing your projects with AI-powered tag generation"
 authors = ["Hamze Ghalebi ghalebi@gmail.com"]

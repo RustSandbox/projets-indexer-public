@@ -5,10 +5,10 @@ edition = "2021"
 description = "A powerful command-line tool for indexing and organizing your projects with AI-powered tag generation"
 authors = ["Hamze Ghalebi ghalebi@gmail.com"]
 license = "MIT"
-repository = "https://github.com/hghalebi/projets-indexer"
-keywords = ["projects", "indexer", "ollama", "ai", "cli"]
-categories = ["command-line-utilities", "development-tools"]
+repository = "git@github.com:RustSandbox/projets-indexer-public.git"
 readme = "README.md"
+keywords = ["projects", "indexing", "organization", "ai", "tags", "git"]
+categories = ["command-line-utilities", "development-tools"]
 
 [dependencies]
 reqwest = { version = "0.11", features = ["json"] }

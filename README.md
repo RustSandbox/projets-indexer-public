@@ -20,7 +20,7 @@ A powerful command-line tool for indexing and organizing your projects. It can s
 
 ```bash
 # Clone the repository
-git clone git@github.com:RustSandbox/projets-indexer.git
+git clone git@github.com:RustSandbox/projets-indexer-public.git
 cd projets-indexer
 
 # Build the project
